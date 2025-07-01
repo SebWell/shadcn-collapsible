@@ -2,21 +2,21 @@
   <div 
     :class="cn(
       'space-y-2',
-      customClass
+      content.customClass
     )"
   >
     <!-- Trigger -->
     <button
       type="button"
-      :disabled="disabled"
+      :disabled="content.disabled"
       :class="cn(
         'flex w-full items-center justify-between rounded-md p-2 text-sm font-medium transition-colors',
         'hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2',
         'focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
-        triggerVariant === 'outline' && 'border border-input bg-background',
-        triggerVariant === 'ghost' && 'hover:bg-accent',
-        triggerVariant === 'default' && 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        triggerClass
+        content.triggerVariant === 'outline' && 'border border-input bg-background',
+        content.triggerVariant === 'ghost' && 'hover:bg-accent',
+        content.triggerVariant === 'default' && 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        content.triggerClass
       )"
       @click="toggle"
       :aria-expanded="isOpen"
@@ -26,7 +26,7 @@
       <div class="flex items-center gap-2">
         <!-- Custom trigger icon -->
         <div 
-          v-if="showTriggerIcon"
+          v-if="content.showTriggerIcon"
           :class="cn(
             'h-4 w-4 shrink-0 transition-transform duration-200',
             isOpen && 'rotate-180'
@@ -46,24 +46,24 @@
         </div>
         
         <!-- Trigger text -->
-        <span>{{ triggerText }}</span>
+        <span>{{ content.triggerText }}</span>
       </div>
       
       <!-- Badge with count -->
       <div 
-        v-if="showBadge && badgeText"
+        v-if="content.showBadge && content.badgeText"
         :class="cn(
           'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors',
           'bg-secondary text-secondary-foreground'
         )"
       >
-        {{ badgeText }}
+        {{ content.badgeText }}
       </div>
     </button>
 
     <!-- Collapsible content -->
     <Transition
-      :name="animation"
+      :name="content.animation"
       @enter="onEnter"
       @after-enter="onAfterEnter"
       @before-leave="onBeforeLeave"
@@ -75,27 +75,27 @@
         ref="contentRef"
         :class="cn(
           'overflow-hidden',
-          contentClass
+          content.contentClass
         )"
       >
         <div 
           :class="cn(
             'pb-4 pt-0',
-            contentPadding && 'px-4',
-            contentBackground && 'rounded-md bg-muted/50'
+            content.contentPadding && 'px-4',
+            content.contentBackground && 'rounded-md bg-muted/50'
           )"
         >
           <!-- Slot for content -->
           <slot>
             <!-- Default content if no slot provided -->
             <div 
-              v-if="defaultContent"
+              v-if="content.defaultContent"
               :class="cn(
                 'text-sm text-muted-foreground',
-                textClass
+                content.textClass
               )"
             >
-              {{ defaultContent }}
+              {{ content.defaultContent }}
             </div>
           </slot>
         </div>
@@ -140,7 +140,7 @@ const isOpen = computed({
 
 // Methods
 const toggle = () => {
-  if (value?.disabled) return
+  if (content.value?.disabled) return
   
   const newValue = !isOpen.value
   isOpen.value = newValue
@@ -168,7 +168,7 @@ const close = () => {
 
 // Animation handlers
 const onEnter = (el) => {
-  if (value?.animation === 'slide') {
+  if (content.value?.animation === 'slide') {
     el.style.height = '0px'
     el.style.overflow = 'hidden'
     nextTick(() => {
@@ -178,21 +178,21 @@ const onEnter = (el) => {
 }
 
 const onAfterEnter = (el) => {
-  if (value?.animation === 'slide') {
+  if (content.value?.animation === 'slide') {
     el.style.height = 'auto'
     el.style.overflow = 'visible'
   }
 }
 
 const onBeforeLeave = (el) => {
-  if (value?.animation === 'slide') {
+  if (content.value?.animation === 'slide') {
     el.style.height = el.scrollHeight + 'px'
     el.style.overflow = 'hidden'
   }
 }
 
 const onLeave = (el) => {
-  if (value?.animation === 'slide') {
+  if (content.value?.animation === 'slide') {
     nextTick(() => {
       el.style.height = '0px'
     })
@@ -200,7 +200,7 @@ const onLeave = (el) => {
 }
 
 // Watchers
-watch(() => value?.defaultOpen, (newValue) => {
+watch(() => content.value?.defaultOpen, (newValue) => {
   if (newValue && !isOpen.value) {
     isOpen.value = true
   }
@@ -208,7 +208,7 @@ watch(() => value?.defaultOpen, (newValue) => {
 
 // Lifecycle
 onMounted(() => {
-  if (value?.defaultOpen) {
+  if (content.value?.defaultOpen) {
     internalOpen.value = true
   }
 })
